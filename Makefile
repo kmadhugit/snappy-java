@@ -39,7 +39,7 @@ $(SNAPPY_OUT)/%.o: $(BITSHUFFLE_SRC_DIR)/%.c
 
 SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o BitShuffleNative.o)
 
-CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
+CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR) -Ofast -mcpu=power8 -mtune=power8
 
 ifndef CXXFLAGS_BITSHUFFLE
   ifeq ($(OS_NAME)-$(OS_ARCH),Linux-x86_64)
@@ -77,6 +77,7 @@ $(SNAPPY_GIT_UNPACKED):
 	@mkdir -p $(SNAPPY_SRC_DIR)
 	git clone $(SNAPPY_GIT_REPO_URL) $(SNAPPY_SRC_DIR)
 	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(SNAPPY_VERSION) $(SNAPPY_GIT_REV)
+	cd $(SNAPPY_SRC_DIR) && git fetch origin pull/27/head:pull27 && git checkout pull27
 	touch $@
 
 $(SNAPPY_SOURCE_CONFIGURED): $(SNAPPY_GIT_UNPACKED)
